@@ -31,7 +31,7 @@ def process_json():
                     for document in cursor:
                         document['_id'] = str(document['_id'])
                         document['user_id'] = str(document['user_id'])
-                        document['reason_feedbacks_id'] = str(document['reason_feedbacks_id'])
+                        document['reason_feedback_id'] = str(document['reason_feedbacks_id'])
                         u = "{:%d/%m/%Y/%H/%M/%S}".format(document['updated_at'])
                         c = "{:%d/%m/%Y/%H/%M/%S}".format(document['updated_at'])
                         document['updated_at'] = time.mktime(
@@ -67,6 +67,7 @@ def check_file():
 
 
 def put_hadoop():
+    os.system('source ~/.profile')
     os.system('hdfs dfs -put ./data/*  /user/hadoop/edumall/siren')
 
 
