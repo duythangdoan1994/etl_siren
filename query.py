@@ -29,15 +29,17 @@ def process_json():
                 with open("./data/%s.json" % i, "w") as f:
                     cursor = database[i].find({})
                     for document in cursor:
-                        document['_id'] = str(document['_id'])
-                        document['user_id'] = str(document['user_id'])
-                        document['reason_feedback_id'] = str(document['reason_feedbacks_id'])
-                        u = "{:%d/%m/%Y/%H/%M/%S}".format(document['updated_at'])
-                        c = "{:%d/%m/%Y/%H/%M/%S}".format(document['updated_at'])
+                        document['_id'] = str(document.get('_id'))
+                        document['team_id'] = str(document.get('team_id'))
+                        document['user_id'] = str(document.get('user_id'))
+                        document['reason_feedback_id'] = str(document.get('eason_feedback_id'))
+                        document['channel_feedback_id'] = str(document.get('channel_feedback_id'))
+                        document['updated_at'] = "{:%d/%m/%Y/%H/%M/%S}".format(document['updated_at'])
+                        document['created_at'] = "{:%d/%m/%Y/%H/%M/%S}".format(document['created_at'])
                         document['updated_at'] = time.mktime(
-                            datetime.datetime.strptime(u, "%d/%m/%Y/%H/%M/%S").timetuple())
+                            datetime.datetime.strptime(document['updated_at'], "%d/%m/%Y/%H/%M/%S").timetuple())
                         document['created_at'] = time.mktime(
-                            datetime.datetime.strptime(c, "%d/%m/%Y/%H/%M/%S").timetuple())
+                            datetime.datetime.strptime(document['created_at'], "%d/%m/%Y/%H/%M/%S").timetuple())
                         document = json.dumps(document, default=json_util.default)
                         f.write(document + '\n')
                     f.close()
@@ -49,9 +51,10 @@ def process_json():
                         document['user_id'] = str(document['user_id'])
                         document['updated_at'] = "{:%d:%m:%Y:%H:%M:%S}".format(document['updated_at'])
                         document['created_at'] = "{:%d:%m:%Y:%H:%M:%S}".format(document['created_at'])
-                        document['updated_at'] = time.mktime(time.strptime(document['updated_at'], '%d:%m:%Y:%H:%M:%S'))
-                        document['created_at'] = time.mktime(time.strptime(document['created_at'], '%d:%m:%Y:%H:%M:%S'))
-                        # document = json_util.dumps(document)
+                        document['updated_at'] = time.mktime(
+                            time.strptime(document['updated_at'], '%d:%m:%Y:%H:%M:%S'))
+                        document['created_at'] = time.mktime(
+                            time.strptime(document['created_at'], '%d:%m:%Y:%H:%M:%S'))
                         document = json.dumps(document, default=json_util.default)
                         f.write(document + '\n')
                     f.close()
