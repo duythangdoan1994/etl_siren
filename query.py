@@ -36,10 +36,10 @@ def process_json():
                         document['channel_feedback_id'] = str(document.get('channel_feedback_id'))
                         document['updated_at'] = "{:%d/%m/%Y/%H/%M/%S}".format(document['updated_at'])
                         document['created_at'] = "{:%d/%m/%Y/%H/%M/%S}".format(document['created_at'])
-                        document['updated_at'] = time.mktime(
-                            datetime.datetime.strptime(document['updated_at'], "%d/%m/%Y/%H/%M/%S").timetuple())
-                        document['created_at'] = time.mktime(
-                            datetime.datetime.strptime(document['created_at'], "%d/%m/%Y/%H/%M/%S").timetuple())
+                        document['updated_at'] = int(time.mktime(
+                            datetime.datetime.strptime(document['updated_at'], "%d/%m/%Y/%H/%M/%S").timetuple()))
+                        document['created_at'] = int(time.mktime(
+                            datetime.datetime.strptime(document['created_at'], "%d/%m/%Y/%H/%M/%S").timetuple()))
                         document = json.dumps(document, default=json_util.default)
                         f.write(document + '\n')
                     f.close()
@@ -47,14 +47,17 @@ def process_json():
                 with open("./data/%s.json" % i, "w") as f:
                     cursor = database[i].find({})
                     for document in cursor:
+                        document.update(document['call'])
+                        if 'call' in document:
+                            del document['call']
                         document['_id'] = str(document['_id'])
                         document['user_id'] = str(document['user_id'])
                         document['updated_at'] = "{:%d:%m:%Y:%H:%M:%S}".format(document['updated_at'])
                         document['created_at'] = "{:%d:%m:%Y:%H:%M:%S}".format(document['created_at'])
-                        document['updated_at'] = time.mktime(
-                            time.strptime(document['updated_at'], '%d:%m:%Y:%H:%M:%S'))
-                        document['created_at'] = time.mktime(
-                            time.strptime(document['created_at'], '%d:%m:%Y:%H:%M:%S'))
+                        document['updated_at'] = int(time.mktime(
+                            time.strptime(document['updated_at'], '%d:%m:%Y:%H:%M:%S')))
+                        document['created_at'] = int(time.mktime(
+                            time.strptime(document['created_at'], '%d:%m:%Y:%H:%M:%S')))
                         document = json.dumps(document, default=json_util.default)
                         f.write(document + '\n')
                     f.close()
@@ -70,7 +73,7 @@ def check_file():
 
 
 def put_hadoop():
-    os.system('source ~/.profile')
+    os.system('hdfs dfs -rm  -r -f /user/hadoop/edumall/siren/*')
     os.system('hdfs dfs -put ./data/*  /user/hadoop/edumall/siren')
 
 
